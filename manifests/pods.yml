@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  selector:
+    matchLabels:
+      app: kibana
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:7.5.1
+          ports:
+            - containerPort: 5601
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "500Mi"
+            limits:
+              cpu: "450m"
+              memory: "600Mi"
+          imagePullPolicy: Always
+          livenessProbe:
+            tcpSocket:
+              port: 5601
+            initialDelaySeconds: 5
+          env:
+            - name: ENVIRONMENT
+              value: "prod"
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
