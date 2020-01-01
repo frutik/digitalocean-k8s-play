@@ -8,15 +8,23 @@ spec:
   selector:
     matchLabels:
       app: kibana
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         app: kibana
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kibana-config
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:7.5.1
+          volumeMounts:
+            - name: config-volume
+              mountPath: /tmp/kibana.yaml
+              subPath: kibana.yml
           ports:
             - containerPort: 5601
           resources:
